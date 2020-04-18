@@ -112,6 +112,6 @@ public class GameManager : MonoBehaviour
                 break;
             }            
         }
-        soulAbsorbedText.text = "Delivered Souls: " + souls + ".\nNext reward at " + rewardLevel.soulsRequired;
+        soulAbsorbedText.text = "Delivered Souls: " + souls + "\nNext reward at " + rewardLevel.soulsRequired + " souls";
     }
 }
