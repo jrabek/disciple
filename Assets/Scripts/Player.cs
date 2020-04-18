@@ -12,9 +12,8 @@ public class Player : MovingObject
 
     [SerializeField]
     private int spirit = 100;
-
-    [SerializeField]
-    private int souls = 0;
+    
+    public int souls { get; private set; } = 10;
 
     //Start overrides the Start function of MovingObject
     protected override void Start()
@@ -184,6 +183,13 @@ public class Player : MovingObject
     public void AddSoul(int count = 1)
     {
         souls += count;
+        gameManager.UpdateSouls(souls);
+    }
+
+    public void RemoveSoul(int count = 1)
+    {
+        souls -= count;
+        souls = souls < 0 ? 0 : souls;        
         gameManager.UpdateSouls(souls);
     }
 }

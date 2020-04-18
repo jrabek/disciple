@@ -80,7 +80,7 @@ public abstract class MovingObject : MonoBehaviour
 
         if (hit.transform != null)
         {
-            print("Would collide with " + hit.transform);
+            // print("Would collide with " + hit.transform);
             return false;
         }
         

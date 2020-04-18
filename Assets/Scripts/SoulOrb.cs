@@ -13,48 +13,68 @@ public class SoulOrb : MonoBehaviour
     CircleCollider2D collectCollider;
 
     [SerializeField]
-    float moveSpeed = 1.5;
+    float moveSpeed = 1.5f;
 
-    Player player;
+    private Player player;
 
-    bool isBeingCollected = false;
+    private Demon demon;
 
-    private void Start()
+    private GameObject moveTarget;
+
+    private bool isBeingCollected = false;
+    private bool isBeingAbsorbed = false;
+
+    private void Awake()
     {
         animator = GetComponent<Animator>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {
-        print("Collided with " + collision.transform);
-
-        if (!collision.CompareTag("Player"))
+    {       
+        if (isBeingAbsorbed)
         {
-            return;
+            if (collision.CompareTag("Demon"))
+            {
+                // print("Collided with " + collision.transform);
+                // print("Absorbed");
+                demon.SoulAbsorbed();
+                Destroy(this.gameObject);
+            }            
+        } else if (collision.CompareTag("Player"))
+        {
+            if (!isBeingCollected)
+            {
+                // print("Start collecting");
+                isBeingCollected = true;
+                animator.SetTrigger("Pulse");
+                player = collision.gameObject.GetComponent<Player>();
+                proximityCollider.enabled = false;
+                moveTarget = player.gameObject;
+            }
+            else
+            {
+                // print("Collected");
+                player.AddSoul();
+                Destroy(this.gameObject);
+            }
         }
-
-        if (!isBeingCollected)
-        {
-            print("Start collecting");
-            isBeingCollected = true;
-            animator.SetTrigger("Pulse");
-            player = collision.gameObject.GetComponent<Player>();
-            proximityCollider.enabled = false;
-        } else
-        {
-            print("Collected");
-            player.AddSoul();
-            Destroy(this.gameObject);
-        }                
     }
 
     private void Update()
     {
-        if (isBeingCollected)
+        if (isBeingCollected || isBeingAbsorbed)
         {
-            float distance = Vector3.Distance(transform.position, player.transform.position);
-            print("distance " + distance);
-            transform.position = Vector3.MoveTowards(transform.position, player.transform.position,  (1 / distance) * (1 / moveSpeed) * Time.deltaTime);
+            float distance = Vector3.Distance(transform.position, moveTarget.transform.position);            
+            transform.position = Vector3.MoveTowards(transform.position, moveTarget.transform.position,  (1 / distance) * (1 / moveSpeed) * Time.deltaTime);
         }
+    }
+
+    public void StartAbsortion(Demon demon)
+    {        
+        moveTarget = demon.gameObject;
+        this.demon = demon;
+        animator.SetTrigger("Pulse");
+        proximityCollider.enabled = false;
+        isBeingAbsorbed = true;
     }
 }
