@@ -10,6 +10,8 @@ public abstract class MovingObject : MonoBehaviour
     public float moveTime = 0.1f;            //Time it will take object to move, in seconds.
     public LayerMask blockingLayer;            //Layer on which collision will be checked.
 
+    [SerializeField]
+    private Vector3 transformOffset;
 
     private BoxCollider2D boxCollider;         //The BoxCollider2D component attached to this object.
     private Rigidbody2D rb2D;                //The Rigidbody2D component attached to this object.
@@ -37,14 +39,30 @@ public abstract class MovingObject : MonoBehaviour
         floor = GameManager.instance.grid.transform.Find("Floor").GetComponent<Tilemap>();
 
         Assert.IsNotNull(floor);
+        
+        currentTilePos = CurrentTransformToTile();
+    }
 
-        currentTilePos = new Vector3Int((int)(transform.position.x / moveScale.x), (int)(transform.position.y / moveScale.y), 0);
+    private Vector3Int CurrentTransformToTile()
+    {
+        return TransformToTile(transform.position);
+    }
+
+    private Vector3 TileToTransform(Vector3Int tilePosition)
+    {
+        return new Vector3(tilePosition.x * moveScale.x, tilePosition.y * moveScale.y, 0);
+    }
+
+    private Vector3Int TransformToTile(Vector3 position)
+    {       
+        return new Vector3Int((int)(position.x / moveScale.x), (int)(position.y / moveScale.y), 0);
     }
 
     //Move returns true if it is able to move and false if not. 
     //Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
     protected bool Move(int xDir, int yDir, out RaycastHit2D hit)
-    {
+    {        
+
         //Store start position to move from, based on objects current transform position.
         Vector2 start = transform.position;
 
@@ -115,8 +133,8 @@ public abstract class MovingObject : MonoBehaviour
             //Return and loop until sqrRemainingDistance is close enough to zero to end the function
             yield return null;
         }
-        
-        transform.position = new Vector3(targetTilePos.x * moveScale.x, targetTilePos.y * moveScale.y);
+
+        transform.position = TileToTransform(targetTilePos);
         currentTilePos = targetTilePos;
 
         print("Finishing moving to " + transform.position);
