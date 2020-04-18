@@ -86,7 +86,7 @@ public abstract class MovingObject : MonoBehaviour
         
         targetTilePos = new Vector3Int(currentTilePos.x + xDir, currentTilePos.y + yDir, 0);
 
-        print("Checking tile at " + targetTilePos);
+        // print("Checking tile at " + targetTilePos);
 
         //Check if anything was hit
         if (floor.HasTile(targetTilePos))
@@ -99,7 +99,7 @@ public abstract class MovingObject : MonoBehaviour
             return true;
         } else
         {
-            print("No tile at " + targetTilePos);
+            // print("No tile at " + targetTilePos);
         }
 
         //If something was hit, return false, Move was unsuccesful.
@@ -110,7 +110,7 @@ public abstract class MovingObject : MonoBehaviour
     //Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
     protected IEnumerator SmoothMovement(Vector3 end)
     {
-        print("Moving smoothly to " + end);
+        // print("Moving smoothly to " + end);
 
         //Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
         //Square magnitude is used instead of magnitude becae it's computationally cheaper.
@@ -137,7 +137,7 @@ public abstract class MovingObject : MonoBehaviour
         transform.position = TileToTransform(targetTilePos);
         currentTilePos = targetTilePos;
 
-        print("Finishing moving to " + transform.position);
+        // print("Finishing moving to " + transform.position);
 
         MoveComplete();
     }
@@ -147,7 +147,7 @@ public abstract class MovingObject : MonoBehaviour
     ////AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
     protected virtual bool AttemptMove(int xDir, int yDir, out GameObject hitObject)
     {
-        print("AttemptMove xDir " + xDir + " yDir " + yDir);
+        // print("AttemptMove xDir " + xDir + " yDir " + yDir);
 
         //Hit will store whatever our linecast hits when Move is called.
         RaycastHit2D hit;

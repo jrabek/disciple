@@ -11,7 +11,10 @@ public class Player : MovingObject
     private GameManager gameManager;
 
     [SerializeField]
-    private int spirit = 10;
+    private int spirit = 100;
+
+    [SerializeField]
+    private int souls = 0;
 
     //Start overrides the Start function of MovingObject
     protected override void Start()
@@ -25,6 +28,9 @@ public class Player : MovingObject
         gameManager = GameManager.instance;
 
         Assert.IsNotNull(gameManager);
+
+        gameManager.UpdateSouls(souls);
+        gameManager.UpdateSpirit(spirit);
     }
 
 
@@ -80,6 +86,8 @@ public class Player : MovingObject
         //Every time player moves, subtract from food points total.
         spirit--;
 
+        gameManager.UpdateSpirit(spirit);
+
         //If Move returns true, meaning Player was able to move into an empty space.
         if (base.AttemptMove(xDir, yDir, out hitObject))
         {
@@ -90,10 +98,10 @@ public class Player : MovingObject
             CheckIfGameOver();
             return true;
         } else {
-            print("AttemptMove Failed");
+            // print("AttemptMove Failed");
             gameManager.PlayerFinishAction();
             return false;
-        }
+        }        
     }
 
     protected override void MoveComplete()
@@ -171,5 +179,11 @@ public class Player : MovingObject
             //Call the GameOver function of GameManager.
             gameManager.GameOver();
         }
+    }
+
+    public void AddSoul(int count = 1)
+    {
+        souls += count;
+        gameManager.UpdateSouls(souls);
     }
 }

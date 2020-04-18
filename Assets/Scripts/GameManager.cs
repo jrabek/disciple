@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {  
@@ -12,7 +13,13 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
-    private HashSet<Enemy> enemies = new HashSet<Enemy>();        
+    private HashSet<Enemy> enemies = new HashSet<Enemy>();
+
+    [SerializeField]
+    private Text soulText;
+
+    [SerializeField]
+    private Text spiritText;
 
     private void Awake()
     {         
@@ -47,5 +54,15 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
 
+    }
+
+    public void UpdateSouls(int souls)
+    {
+        soulText.text = "Souls: " + souls;
+    }
+
+    public void UpdateSpirit(int spirit)
+    {
+        spiritText.text = "Spirit: " + spirit;
     }
 }
