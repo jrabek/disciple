@@ -9,7 +9,7 @@ public class Player : MovingObject
     
     private GameManager gameManager;  
 
-    public int time { get; private set; } = 100;
+    public int time { get; private set; } = 150;
     private const int baseTime = 100;   
 
     public int souls { get; private set; } = 0;

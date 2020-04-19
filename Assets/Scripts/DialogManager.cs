@@ -36,7 +36,7 @@ public class DialogContainer
         dialogs[DialogKey.MoreSoulCapacity] = "Demon: You have proved yourself a loyal servant. " +
                                                "You now have the ability to carry twice the souls back to me.";
         dialogs[DialogKey.MoreTime] = "Demon: Back so soon? How about I give you a bit more time to find souls.";
-        dialogs[DialogKey.NowCanDash] = "Demon: Yes! Yes! More souls.  Now you may cross gaps to reach more souls!";
+        dialogs[DialogKey.NowCanDash] = "Demon: Yes! Yes! More souls.  Now you may cross gaps to reach more souls! Use <space> to dash.";
         dialogs[DialogKey.EvenMoreTime] = "Demon: Back so soon again? How about I give you even more time to find souls.";
         dialogs[DialogKey.CantKillMe] = "Demon: You think you can kill me?  Fool... Try again.";
         dialogs[DialogKey.CanDestroyTheDemon] = "Spirit: The demon is not the only one who gives powers. I have granted "+

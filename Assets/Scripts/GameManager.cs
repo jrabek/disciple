@@ -63,11 +63,11 @@ public class GameManager : MonoBehaviour
         new RewardLevel(0, RewardType.RewardNone),
         new RewardLevel(4, RewardType.RewardPushCrates),
         new RewardLevel(10, RewardType.RewardMoreTime),
-        new RewardLevel(6, RewardType.RewardCarryDoubleSouls),
-        new RewardLevel(10, RewardType.RewardEvenMoreTime),
-        new RewardLevel(8, RewardType.RewardDash),
-        new RewardLevel(10, RewardType.RewardDestroyDemon),
-        new RewardLevel(12, RewardType.RewardMax),
+        new RewardLevel(20, RewardType.RewardCarryDoubleSouls),
+        new RewardLevel(40, RewardType.RewardEvenMoreTime),
+        new RewardLevel(80, RewardType.RewardDash),
+        new RewardLevel(100, RewardType.RewardDestroyDemon),
+        new RewardLevel(101, RewardType.RewardMax),
     };
    
     [SerializeField]
