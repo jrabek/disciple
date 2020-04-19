@@ -43,24 +43,24 @@ public abstract class MovingObject : MonoBehaviour
         currentTilePos = CurrentTransformToTile();
     }
 
-    private Vector3Int CurrentTransformToTile()
+    protected Vector3Int CurrentTransformToTile()
     {
         return TransformToTile(transform.position);
     }
 
-    private Vector3 TileToTransform(Vector3Int tilePosition)
+    protected Vector3 TileToTransform(Vector3Int tilePosition)
     {
         return new Vector3(tilePosition.x * moveScale.x, tilePosition.y * moveScale.y, 0);
     }
 
-    private Vector3Int TransformToTile(Vector3 position)
+    protected Vector3Int TransformToTile(Vector3 position)
     {       
         return new Vector3Int((int)(position.x / moveScale.x), (int)(position.y / moveScale.y), 0);
     }
 
     //Move returns true if it is able to move and false if not. 
     //Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
-    protected bool Move(int xDir, int yDir, out RaycastHit2D hit)
+    public bool Move(int xDir, int yDir, out RaycastHit2D hit)
     {        
 
         //Store start position to move from, based on objects current transform position.
@@ -80,8 +80,17 @@ public abstract class MovingObject : MonoBehaviour
 
         if (hit.transform != null)
         {
-            // print("Would collide with " + hit.transform);
-            return false;
+            print("Would collide with " + hit.transform);
+
+            if (hit.transform.gameObject.CompareTag("Crate"))
+            {                
+                if (!MoveCrate(hit.transform.GetComponent<Crate>()))
+                {
+                    return false;
+                }   
+            } else {
+                return false;
+            }
         }
         
         targetTilePos = new Vector3Int(currentTilePos.x + xDir, currentTilePos.y + yDir, 0);
@@ -106,6 +115,29 @@ public abstract class MovingObject : MonoBehaviour
         return false;
     }
 
+    private bool MoveCrate(Crate crate)
+    {
+        Vector3 playerPosition = transform.position;
+        Vector3 cratePosition = crate.transform.position;
+
+        // TODO: Convert this to use tile map coordinates
+        float horizontalDelta = playerPosition.x - cratePosition.x;
+        int horizontal = horizontalDelta > 0 ? -1 : 1;
+        float verticalDelta = playerPosition.y - cratePosition.y;
+        int vertical = verticalDelta > 0 ? -1 : 1;
+        if (Mathf.Abs(verticalDelta) > Mathf.Abs(horizontalDelta))
+        {
+            horizontal = 0;
+        }
+        else
+        {
+            vertical = 0;
+        }
+
+        print("Attempting to move crate h:" + horizontal + "("+horizontalDelta+") v:" + vertical + " ("+verticalDelta+")");
+
+        return crate.Move(horizontal, vertical, out _);
+    }
 
     //Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
     protected IEnumerator SmoothMovement(Vector3 end)
