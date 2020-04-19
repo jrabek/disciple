@@ -7,6 +7,7 @@ using UnityEngine.UI;
 enum RewardType {
     RewardPushCrates,
     RewardCarryDoubleSouls,
+    RewardDash, // cross gaps
     RewardDestroyDemon
 }
 
