@@ -92,6 +92,7 @@ public class Demon : MonoBehaviour
             isOffering = false;
             proximityCollider.enabled = true;
             animator.SetTrigger("Idle");
+            player.RestoreTime();
         }
     }
 }

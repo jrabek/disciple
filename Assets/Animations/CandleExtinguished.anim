@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Candle
+  m_Name: CandleExtinguished
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -19,17 +19,8 @@ AnimationClip:
   m_FloatCurves: []
   m_PPtrCurves:
   - curve:
-    - time: 0.016666668
-      value: {fileID: 1365539031471768751, guid: 03b510c92cdf8429c90363345b1e2ede,
-        type: 3}
-    - time: 0.2
-      value: {fileID: 3164754189931214212, guid: 03b510c92cdf8429c90363345b1e2ede,
-        type: 3}
-    - time: 0.38333333
-      value: {fileID: 765352457440723577, guid: 03b510c92cdf8429c90363345b1e2ede,
-        type: 3}
-    - time: 0.56666666
-      value: {fileID: 1365539031471768751, guid: 03b510c92cdf8429c90363345b1e2ede,
+    - time: 0
+      value: {fileID: 8724906649512049868, guid: 03b510c92cdf8429c90363345b1e2ede,
         type: 3}
     attribute: m_Sprite
     path: 
@@ -50,16 +41,13 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: 1365539031471768751, guid: 03b510c92cdf8429c90363345b1e2ede, type: 3}
-    - {fileID: 3164754189931214212, guid: 03b510c92cdf8429c90363345b1e2ede, type: 3}
-    - {fileID: 765352457440723577, guid: 03b510c92cdf8429c90363345b1e2ede, type: 3}
-    - {fileID: 1365539031471768751, guid: 03b510c92cdf8429c90363345b1e2ede, type: 3}
+    - {fileID: 8724906649512049868, guid: 03b510c92cdf8429c90363345b1e2ede, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5833333
+    m_StopTime: 0.016666668
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

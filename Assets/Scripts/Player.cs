@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;        //Allows us to use SceneManager
 using UnityEngine.Assertions;
 
 //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
@@ -8,10 +7,10 @@ public class Player : MovingObject
 {       
     private Animator animator;                    //Used to store a reference to the Player's animator component.
     
-    private GameManager gameManager;
+    private GameManager gameManager;  
 
-    [SerializeField]
-    private int time = 100;
+    public int time { get; private set; } = 100;
+    private const int baseTime = 100;   
 
     public int souls { get; private set; } = 0;
     private const int baseSoulCapacity = 10;
@@ -20,9 +19,19 @@ public class Player : MovingObject
 
     private const int dashLength = 2;
 
+    private bool isDead = false;
+
     // Powers
+    [SerializeField]
     private bool dashEnabled = false;
+
+    [SerializeField]
     private bool pushCratesEnabled = false;
+
+    [SerializeField]
+    private int timeMultiplier = 1;
+
+    [SerializeField]
     private bool killDemonEnabled = false;
 
     private int pendingSouls = 0;
@@ -43,6 +52,7 @@ public class Player : MovingObject
 
         Assert.IsNotNull(gameManager);
 
+        gameManager.UpdateSoulCapacity(soulCapacity);
         gameManager.UpdateSouls(souls);
         gameManager.UpdateTime(time);
     }
@@ -50,6 +60,10 @@ public class Player : MovingObject
 
     private void Update()
     {
+        if (isDead) return;
+
+        if (gameManager.paused) return;
+
         //If it's not the player's turn, exit the function.
         if (!gameManager.playersTurn) return;
 
@@ -74,6 +88,9 @@ public class Player : MovingObject
             transform.localScale = new Vector3(facing, transform.localScale.y, 1);
         }
 
+        // We do this out here so that we can enable pushing
+        // of crates in the inspector
+        pushCratesWasEnabled = pushCratesEnabled;
 
         GameObject hitObject;
 
@@ -89,8 +106,7 @@ public class Player : MovingObject
                 print("Ran into " + hitObject);
             }
         } else if (Input.GetKeyDown(KeyCode.Space) && dashEnabled)
-        {
-            pushCratesWasEnabled = pushCratesEnabled;
+        {            
             pushCratesEnabled = false;
             AttemptMove(facing * dashLength, 0, out hitObject);
 
@@ -144,47 +160,34 @@ public class Player : MovingObject
     //OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
     private void OnTriggerEnter2D(Collider2D other)
     {
-        ////Check if the tag of the trigger collided with is Exit.
-        //if (other.tag == "Exit")
-        //{
-        //    //Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
-        //    Invoke("Restart", restartLevelDelay);
+        print("Ran into " + other);
+        if (IsEnemy(other.gameObject))
+        {
+            Die("You Were Consumed By Evil");
+        }
+    }    
 
-        //    //Disable the player object since level is over.
-        //    enabled = false;
-        //}
-
-        ////Check if the tag of the trigger collided with is Food.
-        //else if (other.tag == "Food")
-        //{
-        //    //Add pointsPerFood to the players current food total.
-        //    spirit += pointsPerFood;
-
-        //    //Disable the food object the player collided with.
-        //    other.gameObject.SetActive(false);
-        //}
-
-        ////Check if the tag of the trigger collided with is Soda.
-        //else if (other.tag == "Soda")
-        //{
-        //    //Add pointsPerSoda to players food points total
-        //    spirit += pointsPerSoda;
-
-
-        //    //Disable the soda object the player collided with.
-        //    other.gameObject.SetActive(false);
-        //}
-    }
-
-
-    //Restart reloads the scene when called.
-    private void Restart()
+    private void Die(string reason)
     {
-        //Load the last scene loaded, in this case Main, the only scene in the game.
-        SceneManager.LoadScene(0);
+        isDead = true;
+        gameManager.GameOver(reason);
     }
 
-    
+    private bool IsEnemy(GameObject obj)
+    {
+        return obj.GetComponent<Enemy>() != null;        
+    }
+
+    public void SetTimeMultiplier(int multiplier)
+    {
+        timeMultiplier = multiplier;
+    }
+
+    public void RestoreTime()
+    {
+        time = baseTime * timeMultiplier;
+    }
+
     //It takes a parameter loss which specifies how many points to lose.
     public void LoseTime(int loss)
     {
@@ -205,9 +208,8 @@ public class Player : MovingObject
         //Check if food point total is less than or equal to zero.
         if (time <= 0)
         {
-
             //Call the GameOver function of GameManager.
-            gameManager.GameOver();
+            Die("You Ran Out Of Time");
         }
     }
 
