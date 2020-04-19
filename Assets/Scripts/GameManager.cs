@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdateSouls(int souls)
     {
-        soulText.text = "Souls: " + souls;
+        soulText.text = "" + souls;
     }
 
     public void UpdateSpirit(int spirit)
