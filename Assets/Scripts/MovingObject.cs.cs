@@ -84,7 +84,7 @@ public abstract class MovingObject : MonoBehaviour
         {
             print("Would collide with " + hit.transform);
 
-            if (hit.transform.gameObject.CompareTag("Crate"))
+            if (hit.transform.gameObject.CompareTag("Crate") && AllowedToMoveCrate())
             {                
                 if (!MoveCrate(hit.transform.GetComponent<Crate>()))
                 {
@@ -115,6 +115,11 @@ public abstract class MovingObject : MonoBehaviour
 
         //If something was hit, return false, Move was unsuccesful.
         return false;
+    }
+
+    protected virtual bool AllowedToMoveCrate()
+    {
+        return true;
     }
 
     private bool MoveCrate(Crate crate)

@@ -112,6 +112,11 @@ public class Player : MovingObject
         }        
     }
 
+    protected override bool AllowedToMoveCrate()
+    {
+        return pushCratesEnabled;
+    }
+
     protected override void MoveComplete()
     {
         animator.SetTrigger("Idle");
