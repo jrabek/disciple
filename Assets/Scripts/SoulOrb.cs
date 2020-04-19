@@ -22,7 +22,7 @@ public class SoulOrb : MonoBehaviour
     private GameObject moveTarget;
 
     private bool isBeingCollected = false;
-    private bool isBeingAbsorbed = false;
+    private bool isBeingOffered = false;
 
     private void Awake()
     {
@@ -31,25 +31,30 @@ public class SoulOrb : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {       
-        if (isBeingAbsorbed)
+        if (isBeingOffered)
         {
             if (collision.CompareTag("Demon"))
             {
                 // print("Collided with " + collision.transform);
-                // print("Absorbed");
-                demon.SoulAbsorbed();
+                // print("Offered");
+                demon.SoulOffered();
                 Destroy(this.gameObject);
             }            
         } else if (collision.CompareTag("Player"))
         {
+            player = collision.gameObject.GetComponent<Player>();
             if (!isBeingCollected)
             {
-                // print("Start collecting");
-                isBeingCollected = true;
-                animator.SetTrigger("Pulse");
-                player = collision.gameObject.GetComponent<Player>();
-                proximityCollider.enabled = false;
-                moveTarget = player.gameObject;
+                if (player.CouldAddSoul())
+                {
+                    // print("Start collecting");
+                    isBeingCollected = true;
+                    animator.SetTrigger("Pulse");                    
+                    proximityCollider.enabled = false;
+                    moveTarget = player.gameObject;
+                } else {
+                    player.CantAddSouls();
+                }
             }
             else
             {
@@ -62,19 +67,19 @@ public class SoulOrb : MonoBehaviour
 
     private void Update()
     {
-        if (isBeingCollected || isBeingAbsorbed)
+        if (isBeingCollected || isBeingOffered)
         {
             float distance = Vector3.Distance(transform.position, moveTarget.transform.position);            
             transform.position = Vector3.MoveTowards(transform.position, moveTarget.transform.position,  (1 / distance) * (1 / moveSpeed) * Time.deltaTime);
         }
     }
 
-    public void StartAbsortion(Demon demon)
+    public void StartOffering(Demon demon)
     {        
         moveTarget = demon.gameObject;
         this.demon = demon;
         animator.SetTrigger("Pulse");
         proximityCollider.enabled = false;
-        isBeingAbsorbed = true;
+        isBeingOffered = true;
     }
 }

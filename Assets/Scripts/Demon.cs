@@ -26,7 +26,7 @@ public class Demon : MonoBehaviour
 
     private int outstandingSouls = 0;
 
-    bool isAbsorbing = false;
+    bool isOffering = false;
     
     // Start is called before the first frame update
     void Start()
@@ -39,7 +39,7 @@ public class Demon : MonoBehaviour
     void Update()
     {
         UpdateFacingDirection();
-        CheckSoulAbsorbtion();
+        CheckSoulOffering();
     }
 
     private void UpdateFacingDirection()
@@ -48,9 +48,9 @@ public class Demon : MonoBehaviour
         transform.localScale = new Vector3(horizontal, transform.localScale.y, 1);
     }
 
-    private void CheckSoulAbsorbtion()
+    private void CheckSoulOffering()
     {
-        if (isAbsorbing)
+        if (isOffering)
         {
             float timeBetweenExtraction = baseTimeBetweenExtraction * 10 / player.souls;
             timeBetweenExtraction = timeBetweenExtraction > 0.5f ? 0.5f : timeBetweenExtraction;
@@ -59,9 +59,9 @@ public class Demon : MonoBehaviour
                 lastExtractionTime = Time.time;
                 if (player.souls > 0)
                 {
-                    // print("Souls left to absorb " + player.souls);
+                    // print("Souls left to offer " + player.souls);
                     SoulOrb newOrb = Instantiate(orbPrefab, player.transform.position, Quaternion.identity, transform);
-                    newOrb.StartAbsortion(this);                    
+                    newOrb.StartOffering(this);                    
                     player.RemoveSoul();
                     outstandingSouls++;
                 }               
@@ -71,25 +71,25 @@ public class Demon : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {       
-        if (!isAbsorbing && collision.CompareTag("Player") && player.souls > 0)
+        if (!isOffering && collision.CompareTag("Player") && player.souls > 0)
         {
             proximityCollider.enabled = false;
             // print("Start collecting");
-            isAbsorbing = true;
+            isOffering = true;
             animator.SetTrigger("Munch");            
         }       
     }
 
-    public void SoulAbsorbed(int souls = 1)
+    public void SoulOffered(int souls = 1)
     {
         this.souls += souls;
-        gameManager.UpdateSoulsAbsorbed(this.souls);
+        gameManager.UpdateSoulsOffered(this.souls);
 
         outstandingSouls--;
         if (outstandingSouls == 0)
         {
-            // print("Done absorbing");
-            isAbsorbing = false;
+            // print("Done offering");
+            isOffering = false;
             proximityCollider.enabled = true;
             animator.SetTrigger("Idle");
         }

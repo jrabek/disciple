@@ -11,9 +11,19 @@ public class Player : MovingObject
     private GameManager gameManager;
 
     [SerializeField]
-    private int spirit = 100;
-    
-    public int souls { get; private set; } = 10;
+    private int time = 100;
+
+    public int souls { get; private set; } = 0;
+    private const int baseSoulCapacity = 10;
+    public const int maxSoulCapacity = baseSoulCapacity * 2;
+    public int soulCapacity { get; private set; } = baseSoulCapacity;
+
+    // Powers
+    private bool dashEnabled = false;
+    private bool pushCratesEnabled = false;
+    private bool killDemonEnabled = false;
+
+    private int pendingSouls = 0;
 
     //Start overrides the Start function of MovingObject
     protected override void Start()
@@ -29,7 +39,7 @@ public class Player : MovingObject
         Assert.IsNotNull(gameManager);
 
         gameManager.UpdateSouls(souls);
-        gameManager.UpdateSpirit(spirit);
+        gameManager.UpdateTime(time);
     }
 
 
@@ -40,7 +50,6 @@ public class Player : MovingObject
 
         int horizontal = 0;      //Used to store the horizontal move direction.
         int vertical = 0;        //Used to store the vertical move direction.
-
 
         //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
         horizontal = (Input.GetKeyDown(KeyCode.RightArrow) ? 1 : 0) - (Input.GetKeyDown(KeyCode.LeftArrow) ? 1 : 0);
@@ -83,9 +92,9 @@ public class Player : MovingObject
         gameManager.PlayerStartAction();
 
         //Every time player moves, subtract from food points total.
-        spirit--;
+        time--;
 
-        gameManager.UpdateSpirit(spirit);
+        gameManager.UpdateTime(time);
 
         //If Move returns true, meaning Player was able to move into an empty space.
         if (base.AttemptMove(xDir, yDir, out hitObject))
@@ -155,13 +164,13 @@ public class Player : MovingObject
 
     
     //It takes a parameter loss which specifies how many points to lose.
-    public void LoseSpirit(int loss)
+    public void LoseTime(int loss)
     {
         //Set the trigger for the player animator to transition to the playerHit animation.
         animator.SetTrigger("playerHit");
 
         //Subtract lost food points from the players total.
-        spirit -= loss;
+        time -= loss;
 
         //Check to see if game has ended.
         CheckIfGameOver();
@@ -172,7 +181,7 @@ public class Player : MovingObject
     private void CheckIfGameOver()
     {
         //Check if food point total is less than or equal to zero.
-        if (spirit <= 0)
+        if (time <= 0)
         {
 
             //Call the GameOver function of GameManager.
@@ -180,9 +189,27 @@ public class Player : MovingObject
         }
     }
 
+    public bool CouldAddSoul(int count = 1)
+    {
+        if (souls + count + pendingSouls < soulCapacity)
+        {
+            pendingSouls += count;
+            return true;
+        } else
+        {
+            return false;
+        }
+    }    
+
+    public void CantAddSouls()
+    {
+        gameManager.IndicateFullSouls();
+    }
+
     public void AddSoul(int count = 1)
     {
         souls += count;
+        pendingSouls -= count;
         gameManager.UpdateSouls(souls);
     }
 
@@ -191,5 +218,25 @@ public class Player : MovingObject
         souls -= count;
         souls = souls < 0 ? 0 : souls;        
         gameManager.UpdateSouls(souls);
+    }
+
+    public void EnableDoubleSouls()
+    {
+        soulCapacity = baseSoulCapacity * 2;
+    }
+
+    public void EnableDash()
+    {
+        dashEnabled = true;
+    }
+
+    public void EnablePushCrates()
+    {
+        pushCratesEnabled = true;
+    }
+
+    public void EnableKillDemon()
+    {
+        killDemonEnabled = true;
     }
 }

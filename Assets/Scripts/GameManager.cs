@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-enum RewardType {
+public enum RewardType {
+    RewardNone,
     RewardPushCrates,
     RewardCarryDoubleSouls,
     RewardDash, // cross gaps
-    RewardDestroyDemon
+    RewardDestroyDemon,
+    RewardMax
 }
 
-struct RewardLevel
+public struct RewardLevel
 {
     public int soulsRequired;
     public RewardType reward;
@@ -33,26 +34,36 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
+    private int highestReward;    
+    private float soulBarMaxWidth;
+
     private HashSet<Enemy> enemies = new HashSet<Enemy>();
 
+    int nextRewardLevel = 1;
+
     [SerializeField]
-    RewardLevel currentRewardLevel;
+    private Player player;
+
+    public RewardLevel currentRewardLevel { get; private set; }
 
     private RewardLevel[] rewardLevels = new RewardLevel[]
     {
-        new RewardLevel(5, RewardType.RewardPushCrates),
-        new RewardLevel(10, RewardType.RewardCarryDoubleSouls),
-        new RewardLevel(15, RewardType.RewardDestroyDemon)
+        new RewardLevel(0, RewardType.RewardNone),
+        new RewardLevel(2, RewardType.RewardPushCrates),
+        new RewardLevel(4, RewardType.RewardCarryDoubleSouls),
+        new RewardLevel(6, RewardType.RewardDash),
+        new RewardLevel(8, RewardType.RewardDestroyDemon),
+        new RewardLevel(10, RewardType.RewardMax),
     };
    
     [SerializeField]
-    private Text soulText;
+    private Slider soulsOfferedSlider;
 
     [SerializeField]
-    private Text spiritText;
+    private Text timeText;
 
     [SerializeField]
-    private Text soulAbsorbedText;
+    private Slider soulsCollectedSlider;
 
     private void Awake()
     {         
@@ -61,10 +72,21 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
 
+        highestReward = rewardLevels[rewardLevels.Length - 1].soulsRequired;
         gridSize = grid.cellSize;
-        UpdateSoulsAbsorbed(0);
+    }
+
+    public void Start()
+    {
+        
+        soulBarMaxWidth = soulsOfferedSlider.GetComponent<RectTransform>().rect.width;
+
+        print("Max soulbar width " + soulBarMaxWidth);
+        
+        UpdateSoulsOffered(0);
+        UpdateSoulCapacity(10);
         UpdateSouls(0);
-        UpdateSpirit(0);
+        UpdateTime(0);
     }
 
     public void AddEnemy(Enemy enemy)
@@ -92,27 +114,74 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void UpdateSoulCapacity(int soulCapacity)
+    {                
+        UpdateSliderMaxValue(soulsCollectedSlider, soulCapacity, Player.maxSoulCapacity);
+    }
+
     public void UpdateSouls(int souls)
     {
-        soulText.text = "" + souls;
+        soulsCollectedSlider.value = souls;
     }
 
-    public void UpdateSpirit(int spirit)
+    public void UpdateTime(int time)
     {
-        spiritText.text = "Spirit: " + spirit;
+        timeText.text = "" + time;
     }
 
-    public void UpdateSoulsAbsorbed(int souls)
+    public void UpdateSoulsOffered(int souls)
     {
+        print("Update souls offered to " + souls);
         RewardLevel rewardLevel = rewardLevels[0];
+        bool levelUp = false;        
         for (int idx = 0; idx < rewardLevels.Length; idx ++)
         {
             rewardLevel = rewardLevels[idx];
             if (souls < rewardLevel.soulsRequired)
             {
+                if (nextRewardLevel < idx)
+                {
+                    nextRewardLevel++;                    
+                    levelUp = true;
+                }
                 break;
-            }            
+            } else
+            {
+                switch(rewardLevel.reward)
+                {
+                    case RewardType.RewardCarryDoubleSouls: player.EnableDoubleSouls(); break;
+                    case RewardType.RewardDash: player.EnableDash(); break;
+                    case RewardType.RewardDestroyDemon: player.EnableKillDemon(); break;
+                    case RewardType.RewardPushCrates: player.EnablePushCrates(); break;
+                }
+            }
         }
-        soulAbsorbedText.text = "Delivered Souls: " + souls + "\nNext reward at " + rewardLevel.soulsRequired + " souls";
+        UpdateSliderMaxValue(soulsOfferedSlider, rewardLevel.soulsRequired, highestReward);
+        soulsOfferedSlider.value = souls;
+
+        if (levelUp)
+        {
+            LevelUp(rewardLevels[nextRewardLevel - 1]);
+        }
+    }
+
+    private void LevelUp(RewardLevel rewardLevel)
+    {
+        // TODO: animation to show level up along with what power was received.
+        print("Level up. " + rewardLevel.reward);
+    }
+
+    private void UpdateSliderMaxValue(Slider slider, int maxValue, int maxBarValue)
+    {
+        // TODO: How can we make it look like the bar extends when maxValue is updated?
+     //   RectTransform rectTransform = slider.GetComponent<RectTransform>();
+     //   float newWidth = rectTransform.sizeDelta.x + ((float)maxValue / (float)maxBarValue) * soulBarMaxWidth;
+     //   rectTransform.sizeDelta = new Vector2(newWidth, rectTransform.sizeDelta.y);        
+        slider.maxValue = maxValue;
+    }
+
+    public void IndicateFullSouls()
+    {
+        // TODO: Some sort of flash?
     }
 }
