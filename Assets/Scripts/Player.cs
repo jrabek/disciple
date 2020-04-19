@@ -18,12 +18,17 @@ public class Player : MovingObject
     public const int maxSoulCapacity = baseSoulCapacity * 2;
     public int soulCapacity { get; private set; } = baseSoulCapacity;
 
+    private const int dashLength = 2;
+
     // Powers
     private bool dashEnabled = false;
     private bool pushCratesEnabled = false;
     private bool killDemonEnabled = false;
 
     private int pendingSouls = 0;
+
+    private int facing = 1;
+    private bool pushCratesWasEnabled = false;
 
     //Start overrides the Start function of MovingObject
     protected override void Start()
@@ -65,15 +70,16 @@ public class Player : MovingObject
 
         if (horizontal != 0)
         {
-            transform.localScale = new Vector3(horizontal, transform.localScale.y, 1);
+            facing = horizontal;
+            transform.localScale = new Vector3(facing, transform.localScale.y, 1);
         }
-        
+
+
+        GameObject hitObject;
 
         //Check if we have a non-zero value for horizontal or vertical
         if (horizontal != 0 || vertical != 0)
-        {
-            GameObject hitObject;
-
+        {            
             //Call AttemptMove passing in the generic parameter Wall, since that is what Player may interact with if they encounter one (by attacking it)
             //Pass in horizontal and vertical as parameters to specify the direction to move Player in.
             AttemptMove(horizontal, vertical, out hitObject);
@@ -81,6 +87,16 @@ public class Player : MovingObject
             if (hitObject)
             {
                 print("Ran into " + hitObject);
+            }
+        } else if (Input.GetKeyDown(KeyCode.Space) && dashEnabled)
+        {
+            pushCratesWasEnabled = pushCratesEnabled;
+            pushCratesEnabled = false;
+            AttemptMove(facing * dashLength, 0, out hitObject);
+
+            if (hitObject)
+            {
+                print("Can't dash due to " + hitObject);
             }
         }
     }
@@ -92,7 +108,7 @@ public class Player : MovingObject
         gameManager.PlayerStartAction();
 
         //Every time player moves, subtract from food points total.
-        time--;
+        time -= (Mathf.Abs(xDir) + Mathf.Abs(yDir));
 
         gameManager.UpdateTime(time);
 
@@ -107,7 +123,7 @@ public class Player : MovingObject
             return true;
         } else {
             // print("AttemptMove Failed");
-            gameManager.PlayerFinishAction();
+            MoveComplete();
             return false;
         }        
     }
@@ -119,6 +135,7 @@ public class Player : MovingObject
 
     protected override void MoveComplete()
     {
+        pushCratesEnabled = pushCratesWasEnabled;
         animator.SetTrigger("Idle");
         gameManager.PlayerFinishAction();
     }
@@ -237,7 +254,7 @@ public class Player : MovingObject
 
     public void EnablePushCrates()
     {
-        pushCratesEnabled = true;
+        pushCratesWasEnabled = pushCratesEnabled = true;
     }
 
     public void EnableKillDemon()
