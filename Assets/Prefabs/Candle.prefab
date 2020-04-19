@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9135602889595376215}
   - component: {fileID: 9135602889595376212}
   - component: {fileID: 4140986921003409602}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Candle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,9 +117,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.625
+  m_FalloffIntensity: 0.592
   m_Color: {r: 0.9339623, g: 0.3480331, b: 0.3480331, a: 1}
-  m_Intensity: 1
+  m_Intensity: 2.83
   m_LightVolumeOpacity: 0
   m_ApplyToSortingLayers: 00000000ed5b73dc0b5edbb4ed39fa42b5e36c4c
   m_LightCookieSprite: {fileID: 0}
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 0.62
+  m_PointLightOuterRadius: 0.57
   m_PointLightDistance: 3
   m_PointLightQuality: 1
   m_ShapeLightParametricSides: 5

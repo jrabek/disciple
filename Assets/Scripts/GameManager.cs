@@ -49,11 +49,11 @@ public class GameManager : MonoBehaviour
     private RewardLevel[] rewardLevels = new RewardLevel[]
     {
         new RewardLevel(0, RewardType.RewardNone),
-        new RewardLevel(2, RewardType.RewardPushCrates),
-        new RewardLevel(4, RewardType.RewardCarryDoubleSouls),
-        new RewardLevel(6, RewardType.RewardDash),
-        new RewardLevel(8, RewardType.RewardDestroyDemon),
-        new RewardLevel(10, RewardType.RewardMax),
+        new RewardLevel(4, RewardType.RewardPushCrates),
+        new RewardLevel(6, RewardType.RewardCarryDoubleSouls),
+        new RewardLevel(8, RewardType.RewardDash),
+        new RewardLevel(10, RewardType.RewardDestroyDemon),
+        new RewardLevel(12, RewardType.RewardMax),
     };
    
     [SerializeField]

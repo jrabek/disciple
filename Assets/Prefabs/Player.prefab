@@ -102,8 +102,7 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  transformOffset: {x: 0, y: 0, z: 0}
-  spirit: 100
+  time: 100
 --- !u!50 &1301264291
 Rigidbody2D:
   serializedVersion: 4
@@ -186,19 +185,19 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.401
   m_Color: {r: 0.95648503, g: 1, b: 0.5518868, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.57
   m_LightVolumeOpacity: 0
   m_ApplyToSortingLayers: 00000000ed5b73dc0b5edbb4b5e36c4ced39fa42
   m_LightCookieSprite: {fileID: 0}
   m_UseNormalMap: 0
   m_LightOrder: 0
-  m_AlphaBlendOnOverlap: 0
+  m_AlphaBlendOnOverlap: 1
   m_ShadowIntensity: 0
   m_ShadowVolumeIntensity: 0
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 1.14
+  m_PointLightOuterRadius: 2.59
   m_PointLightDistance: 3
   m_PointLightQuality: 1
   m_ShapeLightParametricSides: 5
