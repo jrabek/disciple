@@ -148,7 +148,7 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  transformOffset: {x: 0, y: 0, z: 0}
+  litPushesLeft: 3
 --- !u!1001 &7876148173811933834
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -164,6 +164,11 @@ PrefabInstance:
     - target: {fileID: 9135602889595376213, guid: ce3ced17f740b4a41ac3592840aa1e59,
         type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9135602889595376213, guid: ce3ced17f740b4a41ac3592840aa1e59,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9135602889595376214, guid: ce3ced17f740b4a41ac3592840aa1e59,

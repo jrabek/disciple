@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;        //Allows us to use SceneManager
+using UnityEngine.UI;
 
 public enum RewardType {
     RewardNone,
@@ -41,9 +41,6 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
-    private int highestReward;    
-    private float soulBarMaxWidth;
-
     private HashSet<Enemy> enemies = new HashSet<Enemy>();
 
     private bool waitingToRestart = false;
@@ -62,16 +59,19 @@ public class GameManager : MonoBehaviour
     {
         new RewardLevel(0, RewardType.RewardNone),
         new RewardLevel(4, RewardType.RewardPushCrates),
-        new RewardLevel(10, RewardType.RewardMoreTime),
-        new RewardLevel(20, RewardType.RewardCarryDoubleSouls),
-        new RewardLevel(40, RewardType.RewardEvenMoreTime),
-        new RewardLevel(80, RewardType.RewardDash),
-        new RewardLevel(100, RewardType.RewardDestroyDemon),
-        new RewardLevel(101, RewardType.RewardMax),
+        new RewardLevel(8, RewardType.RewardMoreTime),
+        new RewardLevel(12, RewardType.RewardCarryDoubleSouls),
+        new RewardLevel(16, RewardType.RewardEvenMoreTime),
+        new RewardLevel(18, RewardType.RewardDash),
+        new RewardLevel(20, RewardType.RewardDestroyDemon),
+        new RewardLevel(21, RewardType.RewardMax),
     };
    
     [SerializeField]
-    private Slider soulsOfferedSlider;
+    private SoulBar soulsOffered;
+
+    [SerializeField]
+    private SoulBar soulsCollected;
 
     [SerializeField]
     private Text timeText;
@@ -85,8 +85,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject dialog;
 
-    [SerializeField]
-    private Slider soulsCollectedSlider;
+
 
     private void Awake()
     {         
@@ -94,21 +93,24 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
-
-        highestReward = rewardLevels[rewardLevels.Length - 1].soulsRequired;
+        
         gridSize = grid.cellSize;        
     }
 
     public void Start()
     {
+        InitializeSoulSliders();        
+    }
 
-        //soulBarMaxWidth = soulsOfferedSlider.GetComponent<RectTransform>().rect.width;
+    public void InitializeSoulSliders()
+    {
+        soulsOffered.UpdateMaximumPossible(rewardLevels[rewardLevels.Length - 1].soulsRequired);
+        soulsOffered.UpdateCurrentMaximum(rewardLevels[1].soulsRequired, false);
+        soulsOffered.UpdateCurrent(0);
 
-        //print("Max soulbar width " + soulBarMaxWidth);
-
-        soulsOfferedSlider.maxValue = highestReward;        
-
-        UpdateSoulsOffered(0);
+        soulsCollected.UpdateMaximumPossible(player.maxSoulCapacity);
+        soulsCollected.UpdateCurrentMaximum(player.soulCapacity, false);
+        soulsCollected.UpdateCurrent(player.souls);
     }
 
     private void Update()
@@ -178,14 +180,16 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    public void UpdateSoulCapacity(int soulCapacity)
-    {                
-        UpdateSliderMaxValue(soulsCollectedSlider, soulCapacity, Player.maxSoulCapacity);
+    public void UpdateSoulCapacity()
+    {
+        soulsCollected.UpdateMaximumPossible(player.maxSoulCapacity);
+        soulsCollected.UpdateCurrentMaximum(player.soulCapacity);
+        soulsCollected.UpdateCurrent(player.souls);
     }
 
     public void UpdateSouls(int souls)
     {
-        soulsCollectedSlider.value = souls;
+        soulsCollected.UpdateCurrent(souls);
     }
 
     public void UpdateTime(int time)
@@ -222,44 +226,34 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        // UpdateSliderMaxValue(soulsOfferedSlider, rewardLevel.soulsRequired, highestReward);
-        UpdateSliderMaxValue(soulsOfferedSlider, highestReward, highestReward);
-        soulsOfferedSlider.value = souls;
+        soulsOffered.UpdateCurrent(souls);
+        soulsOffered.UpdateCurrentMaximum(rewardLevel.soulsRequired);
 
         if (levelUp)
         {
-            LevelUp(rewardLevels[nextRewardLevel - 1]);
+            LevelUp(rewardLevels[nextRewardLevel - 1]);                                   
         }
     }
 
     private void LevelUp(RewardLevel rewardLevel)
     {
         // TODO: animation to show level up along with what power was received.
-        print("Level up. " + rewardLevel.reward);
+        print("Level up. " + rewardLevel.reward);        
 
         DialogKey dialogKey = DialogKey.None;
         switch (rewardLevel.reward)
         {
             case RewardType.RewardPushCrates: dialogKey = DialogKey.MoveCrates; break;
-            case RewardType.RewardCarryDoubleSouls: dialogKey = DialogKey.MoveCrates; break;
-            case RewardType.RewardMoreTime: dialogKey = DialogKey.MoveCrates; break;
-            case RewardType.RewardDash: dialogKey = DialogKey.MoveCrates; break;
-            case RewardType.RewardEvenMoreTime: dialogKey = DialogKey.MoveCrates; break;            
+            case RewardType.RewardCarryDoubleSouls: dialogKey = DialogKey.MoreSoulCapacity; break;
+            case RewardType.RewardMoreTime: dialogKey = DialogKey.MoreTime; break;
+            case RewardType.RewardDash: dialogKey = DialogKey.NowCanDash; break;
+            case RewardType.RewardEvenMoreTime: dialogKey = DialogKey.EvenMoreTime; break;            
         }
 
         if (dialogKey != DialogKey.None)
         {
             ShowDialog(dialogKey);
         }        
-    }
-
-    private void UpdateSliderMaxValue(Slider slider, int maxValue, int maxBarValue)
-    {
-        // TODO: How can we make it look like the bar extends when maxValue is updated?
-     //   RectTransform rectTransform = slider.GetComponent<RectTransform>();
-     //   float newWidth = rectTransform.sizeDelta.x + ((float)maxValue / (float)maxBarValue) * soulBarMaxWidth;
-     //   rectTransform.sizeDelta = new Vector2(newWidth, rectTransform.sizeDelta.y);        
-        slider.maxValue = maxValue;
     }
 
     public void IndicateFullSouls()

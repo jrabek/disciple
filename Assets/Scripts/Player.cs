@@ -14,8 +14,24 @@ public class Player : MovingObject
 
     public int souls { get; private set; } = 0;
     private const int baseSoulCapacity = 10;
-    public const int maxSoulCapacity = baseSoulCapacity * 2;
-    public int soulCapacity { get; private set; } = baseSoulCapacity;
+    public const int maxSoulCapacityMultiplier = 2;
+    private int soulCapacityMultiplier = 1;
+
+    public int soulCapacity
+    {
+        get
+        {
+            return baseSoulCapacity * soulCapacityMultiplier;
+        }
+    }
+
+    public int maxSoulCapacity
+    {
+        get
+        {
+            return baseSoulCapacity * maxSoulCapacityMultiplier;
+        }
+    }
 
     private const int dashLength = 2;
 
@@ -51,10 +67,6 @@ public class Player : MovingObject
         gameManager = GameManager.instance;
 
         Assert.IsNotNull(gameManager);
-
-        gameManager.UpdateSoulCapacity(soulCapacity);
-        gameManager.UpdateSouls(souls);
-        gameManager.UpdateTime(time);
     }
 
 
@@ -101,10 +113,10 @@ public class Player : MovingObject
             //Pass in horizontal and vertical as parameters to specify the direction to move Player in.
             AttemptMove(horizontal, vertical, out hitObject);
 
-            if (hitObject)
-            {
-                print("Ran into " + hitObject);
-            }
+            //if (hitObject)
+            //{
+            //    print("Ran into " + hitObject);
+            //}
         } else if (Input.GetKeyDown(KeyCode.Space) && dashEnabled)
         {            
             pushCratesEnabled = false;
@@ -160,7 +172,7 @@ public class Player : MovingObject
     //OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
     private void OnTriggerEnter2D(Collider2D other)
     {
-        print("Ran into " + other);
+        // print("Ran into " + other);
         if (IsEnemy(other.gameObject))
         {
             Die("You Were Consumed By Evil");
@@ -215,7 +227,7 @@ public class Player : MovingObject
 
     public bool CouldAddSoul(int count = 1)
     {
-        if (souls + count + pendingSouls < soulCapacity)
+        if (souls + count + pendingSouls <= soulCapacity)
         {
             pendingSouls += count;
             return true;
@@ -246,7 +258,8 @@ public class Player : MovingObject
 
     public void EnableDoubleSouls()
     {
-        soulCapacity = baseSoulCapacity * 2;
+        soulCapacityMultiplier = 2;
+        gameManager.UpdateSoulCapacity();
     }
 
     public void EnableDash()

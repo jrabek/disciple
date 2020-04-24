@@ -24,9 +24,16 @@ public class SoulOrb : MonoBehaviour
     private bool isBeingCollected = false;
     private bool isBeingOffered = false;
 
+    private GameManager gameManager;
+
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();        
+    }
+
+    private void Start()
+    {
+        gameManager = GameManager.instance;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -67,6 +74,11 @@ public class SoulOrb : MonoBehaviour
 
     private void Update()
     {
+        if (gameManager.paused)
+        {
+            return;
+        }
+
         if (isBeingCollected || isBeingOffered)
         {
             float distance = Vector3.Distance(transform.position, moveTarget.transform.position);            

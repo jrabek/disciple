@@ -22,7 +22,12 @@ public class Crate : MovingObject
 
     protected override void MoveComplete()
     {
-        if (--litPushesLeft == 0)
+        if (litPushesLeft <= 0)
+        {
+            return;
+        }
+
+        if (--litPushesLeft == 0 && candleAnimator != null && candleAnimator.enabled)
         {
             candleAnimator.SetTrigger("Extinguish");
             candleLight.enabled = false;
