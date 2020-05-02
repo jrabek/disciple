@@ -85,8 +85,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject dialog;
 
-
-
     private void Awake()
     {         
         if (!GameManager.instance)
