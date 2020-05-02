@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Zombie : Enemy
 {
+    [SerializeField]
+    int maxManhattanChaseDistance = 10;
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -22,6 +25,11 @@ public class Zombie : Enemy
         int horizontal = horizontalDelta > 0 ? -1 : 1;
         int verticalDelta = zombiePosition.y - playerPosition.y;
         int vertical = verticalDelta > 0 ? -1 : 1;
+
+        if (Mathf.Abs(horizontalDelta) + Mathf.Abs(verticalDelta) > maxManhattanChaseDistance)
+        {
+            return;
+        }
 
         bool couldMove = false;
         if (Mathf.Abs(verticalDelta) > Mathf.Abs(horizontalDelta))

@@ -50,6 +50,9 @@ public class Player : MovingObject
     [SerializeField]
     private bool killDemonEnabled = false;
 
+    [SerializeField]
+    private bool infiniteTime = false;
+
     private int pendingSouls = 0;
 
     private int facing = 1;
@@ -218,7 +221,7 @@ public class Player : MovingObject
     private void CheckIfGameOver()
     {
         //Check if food point total is less than or equal to zero.
-        if (time <= 0)
+        if (time <= 0 && !infiniteTime)
         {
             //Call the GameOver function of GameManager.
             Die("You Ran Out Of Time");

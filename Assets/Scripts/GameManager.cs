@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
     {
         new RewardLevel(0, RewardType.RewardNone),
         new RewardLevel(4, RewardType.RewardPushCrates),
-        new RewardLevel(8, RewardType.RewardMoreTime),
+        new RewardLevel(9, RewardType.RewardMoreTime),
         new RewardLevel(12, RewardType.RewardCarryDoubleSouls),
         new RewardLevel(16, RewardType.RewardEvenMoreTime),
         new RewardLevel(18, RewardType.RewardDash),
@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
     {
         gameOverText.enabled = true;
         print("Game over " + reason);
-        gameOverText.text = "You Failed To Stay Alive\n\n" + reason + "\n\nHit Space To Tray Again";
+        gameOverText.text = "You Failed To Stay Alive\n\n" + reason + "\n\nHit Space To Try Again";
 
         waitingToRestart = true;
     }
