@@ -33,4 +33,10 @@ public class Crate : MovingObject
             candleLight.enabled = false;
         }
     }
+
+    protected override bool AllowedToMoveCrate()
+    {
+        return false;
+    }
+
 }

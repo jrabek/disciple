@@ -102,9 +102,9 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  time: 100
   dashEnabled: 0
-  pushCratesEnabled: 0
+  pushCratesEnabled: 1
+  timeMultiplier: 1
   killDemonEnabled: 0
 --- !u!50 &1301264291
 Rigidbody2D:
@@ -144,7 +144,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.28}
+    oldSize: {x: 0.16, y: 0.16}
     newSize: {x: 0.16, y: 0.28}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
