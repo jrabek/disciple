@@ -24,6 +24,11 @@ public abstract class Enemy : MovingObject
         transform.localScale = new Vector3(horizontal, transform.localScale.y, 1);
     }
 
+    protected override bool KillsPlayer()
+    {
+        return true;
+    }
+
     public virtual void RunAI()
     {
         UpdateFacingDirection();

@@ -85,15 +85,10 @@ public abstract class MovingObject : MonoBehaviour
 
         if (hit.transform != null)
         {
-            print("Would collide with " + hit.transform);
+            // print(this.tag + " would collide with " + hit.transform);
 
-            if (hit.transform.gameObject.CompareTag("Crate") && AllowedToMoveCrate())
-            {                
-                if (!MoveCrate(hit.transform.GetComponent<Crate>()))
-                {
-                    return false;
-                }   
-            } else {
+            if(!TryOverlapTransform(hit.transform))
+            {
                 return false;
             }
         }
@@ -116,6 +111,31 @@ public abstract class MovingObject : MonoBehaviour
         }
 
         //If something was hit, return false, Move was unsuccesful.
+        return false;
+    }
+
+    private bool TryOverlapTransform(Transform transform)
+    {
+        if (transform.gameObject.CompareTag("Enemy") && this.GetComponent<Player>())
+        {
+            return true;
+        }
+        else if (transform.gameObject.CompareTag("Player") && KillsPlayer())
+        {
+            return true;
+        }
+        else if (transform.gameObject.CompareTag("Crate") && AllowedToMoveCrate())
+        {
+            return MoveCrate(transform.GetComponent<Crate>());            
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    protected virtual bool KillsPlayer()
+    {
         return false;
     }
 
@@ -143,7 +163,7 @@ public abstract class MovingObject : MonoBehaviour
             vertical = 0;
         }
 
-        print("Attempting to move crate h:" + horizontal + "("+horizontalDelta+") v:" + vertical + " ("+verticalDelta+")");
+        // print("Attempting to move crate h:" + horizontal + "("+horizontalDelta+") v:" + vertical + " ("+verticalDelta+")");
 
         return crate.Move(horizontal, vertical, out _);
     }
