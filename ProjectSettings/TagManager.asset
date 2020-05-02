@@ -49,9 +49,12 @@ TagManager:
   - name: Floors
     uniqueID: 3034275339
     locked: 0
-  - name: Actors
-    uniqueID: 1123695085
-    locked: 0
   - name: Walls
     uniqueID: 1282204597
+    locked: 0
+  - name: Obstacles
+    uniqueID: 1520625657
+    locked: 0
+  - name: Actors
+    uniqueID: 1123695085
     locked: 0

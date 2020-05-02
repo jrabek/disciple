@@ -19,6 +19,7 @@ public abstract class MovingObject : MonoBehaviour
 
     private Vector2 moveScale;
     private Tilemap floor;
+    private Tilemap obstacles;
     private Vector3Int currentTilePos;
     private Vector3Int targetTilePos;
 
@@ -37,9 +38,11 @@ public abstract class MovingObject : MonoBehaviour
         moveScale = GameManager.instance.gridSize;
  
         floor = GameManager.instance.grid.transform.Find("Floor").GetComponent<Tilemap>();
+        obstacles = GameManager.instance.grid.transform.Find("Obstacles").GetComponent<Tilemap>();
 
         Assert.IsNotNull(floor);
-        
+        Assert.IsNotNull(obstacles);
+
         currentTilePos = CurrentTransformToTile();
         // Force alignment
         transform.position = TileToTransform(currentTilePos);
@@ -100,9 +103,8 @@ public abstract class MovingObject : MonoBehaviour
         // print("Checking tile at " + targetTilePos);
 
         //Check if anything was hit
-        if (floor.HasTile(targetTilePos))
+        if (floor.HasTile(targetTilePos) && !obstacles.HasTile(targetTilePos))
         {
-
             //If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
             StartCoroutine(SmoothMovement(end));
 

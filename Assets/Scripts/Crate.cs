@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Assertions;
 
 public class Crate : MovingObject
 {
@@ -18,6 +19,8 @@ public class Crate : MovingObject
         base.Start();
         candleAnimator = GetComponentInChildren<Animator>();
         candleLight = GetComponentInChildren<Light2D>();
+
+        Assert.IsNotNull(candleLight);
     }
 
     protected override void MoveComplete()
