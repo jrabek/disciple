@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Demon : MonoBehaviour
+public class Demon : CheckPointObject
 {
     [SerializeField]
     private Player player;

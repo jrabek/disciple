@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulOrb : MonoBehaviour
+public class SoulOrb : CheckPointObject
 {
     private Animator animator;
 
@@ -36,6 +36,16 @@ public class SoulOrb : MonoBehaviour
         gameManager = GameManager.instance;
     }
 
+    protected override void SaveState()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void LoadState()
+    {
+        throw new System.NotImplementedException();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {       
         if (isBeingOffered)
@@ -67,7 +77,7 @@ public class SoulOrb : MonoBehaviour
             {
                 // print("Collected");
                 player.AddSoul();
-                Destroy(this.gameObject);
+                this.gameObject.SetActive(false);
             }
         }
     }

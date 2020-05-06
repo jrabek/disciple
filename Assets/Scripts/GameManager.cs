@@ -27,7 +27,7 @@ public struct RewardLevel
     }
 }
 
-public class GameManager : MonoBehaviour
+public class GameManager : CheckPointObject
 {  
     public bool playersTurn = true;
 
@@ -98,6 +98,18 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         InitializeSoulSliders();        
+    }
+
+    protected override void SaveState()
+    {
+        SaveInt("plotPoint", (int)plotPoint);
+        SaveInt("nextRewardLevel", nextRewardLevel);
+    }
+
+    protected override void LoadState()
+    {
+        plotPoint = (DialogKey)RestoreInt("plotPoint");
+        nextRewardLevel = RestoreInt("nextRewardLevel");
     }
 
     public void InitializeSoulSliders()

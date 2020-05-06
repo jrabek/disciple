@@ -15,7 +15,7 @@ public abstract class Enemy : MovingObject
     }
 
     protected override void MoveComplete()
-    {        
+    {
     }
 
     protected void UpdateFacingDirection()
@@ -32,5 +32,15 @@ public abstract class Enemy : MovingObject
     public virtual void RunAI()
     {
         UpdateFacingDirection();
+    }
+
+    protected override void SaveState()
+    {
+        SavePosition(transform.position);
+    }
+
+    protected override void LoadState()
+    {
+        transform.position = RestorePosition();
     }
 }

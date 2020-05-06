@@ -13,9 +13,9 @@ public class Player : MovingObject
     private const int baseTime = 100;   
 
     public int souls { get; private set; } = 0;
+    private int soulCapacityMultiplier = 1;
     private const int baseSoulCapacity = 10;
     public const int maxSoulCapacityMultiplier = 2;
-    private int soulCapacityMultiplier = 1;
 
     public int soulCapacity
     {
@@ -72,6 +72,35 @@ public class Player : MovingObject
         Assert.IsNotNull(gameManager);
     }
 
+
+    protected override void SaveState()
+    {
+        SavePosition(transform.position);
+        SaveInt("souls", souls);
+        SaveInt("time", time);
+        SaveInt("soulCapacityMultiplier", soulCapacityMultiplier);
+        SaveBool("dashEnabled", dashEnabled);
+        SaveBool("killDemonEnabled", killDemonEnabled);
+        SaveBool("pushCratesEnabled", pushCratesEnabled);
+        SaveInt("timeMultiplier", timeMultiplier);
+    }
+
+    protected override void LoadState()
+    {
+        transform.position = RestorePosition();
+        souls = RestoreInt("souls");
+        time = RestoreInt("time");
+        soulCapacityMultiplier = RestoreInt("soulCapacityMultiplier");
+        dashEnabled = RestoreBool("dashEnabled");
+        killDemonEnabled = RestoreBool("killDemonEnabled");
+        pushCratesEnabled = RestoreBool("pushCratesEnabled");
+        timeMultiplier = RestoreInt("timeMultiplier");
+
+        // TODO: No anim version
+        gameManager.UpdateSoulCapacity();
+        gameManager.UpdateSouls(souls);
+        gameManager.UpdateTime(time);
+    }
 
     private void Update()
     {
@@ -278,5 +307,5 @@ public class Player : MovingObject
     public void EnableKillDemon()
     {
         killDemonEnabled = true;
-    }
+    }  
 }
