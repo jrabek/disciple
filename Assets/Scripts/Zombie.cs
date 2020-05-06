@@ -22,11 +22,16 @@ public class Zombie : Enemy
         Vector3Int playerPosition = TransformToTile(player.transform.position);        
         
         int horizontalDelta = zombiePosition.x - playerPosition.x;
-        int horizontal = horizontalDelta > 0 ? -1 : 1;
+        int horizontal = horizontalDelta > 0 ? -1 : horizontalDelta < 0 ? 1 : 0;
         int verticalDelta = zombiePosition.y - playerPosition.y;
-        int vertical = verticalDelta > 0 ? -1 : 1;
+        int vertical = verticalDelta > 0 ? -1 : verticalDelta < 0 ? 1 : 0;
 
         if (Mathf.Abs(horizontalDelta) + Mathf.Abs(verticalDelta) > maxManhattanChaseDistance)
+        {
+            return;
+        }
+
+        if (vertical == 0 && horizontal == 0)
         {
             return;
         }
