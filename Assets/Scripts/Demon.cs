@@ -35,6 +35,16 @@ public class Demon : CheckPointObject
         gameManager = GameManager.instance;
     }
 
+    public override void SaveState()
+    {
+        SaveInt("souls", souls);
+    }
+
+    public override void LoadState()
+    {
+        souls = RestoreInt("souls");
+    }
+
     // Update is called once per frame
     void Update()
     {

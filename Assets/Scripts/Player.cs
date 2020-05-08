@@ -73,7 +73,7 @@ public class Player : MovingObject
     }
 
 
-    protected override void SaveState()
+    public override void SaveState()
     {
         SavePosition(transform.position);
         SaveInt("souls", souls);
@@ -85,7 +85,7 @@ public class Player : MovingObject
         SaveInt("timeMultiplier", timeMultiplier);
     }
 
-    protected override void LoadState()
+    public override void LoadState()
     {
         transform.position = RestorePosition();
         souls = RestoreInt("souls");

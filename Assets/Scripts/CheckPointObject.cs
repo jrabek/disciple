@@ -5,8 +5,8 @@ using UnityEngine.Assertions;
 
 public abstract class CheckPointObject : MonoBehaviour
 {
-    protected abstract void SaveState();
-    protected abstract void LoadState();
+    public abstract void SaveState();
+    public abstract void LoadState();
 
     protected void SaveFloat(string key, float value)
     {

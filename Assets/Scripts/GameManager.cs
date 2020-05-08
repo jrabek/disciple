@@ -100,14 +100,15 @@ public class GameManager : CheckPointObject
         InitializeSoulSliders();        
     }
 
-    protected override void SaveState()
+    public override void SaveState()
     {
         SaveInt("plotPoint", (int)plotPoint);
         SaveInt("nextRewardLevel", nextRewardLevel);
     }
 
-    protected override void LoadState()
+    public override void LoadState()
     {
+        gameOverText.enabled = false;
         plotPoint = (DialogKey)RestoreInt("plotPoint");
         nextRewardLevel = RestoreInt("nextRewardLevel");
     }
@@ -186,8 +187,17 @@ public class GameManager : CheckPointObject
     //Restart reloads the scene when called.
     private void Restart()
     {
-        //Load the last scene loaded, in this case Main, the only scene in the game.
-        SceneManager.LoadScene(0);
+        if (CheckPointManager.instance.hasCheckpoint)
+        {
+            print("Checkpoint found. Reloading checkpoint.");
+            CheckPointManager.instance.LoadState();            
+        }
+        else
+        {
+            print("No checkpoint found. Reloading scene.");
+            //Load the last scene loaded, in this case Main, the only scene in the game.
+            SceneManager.LoadScene(0);
+        }               
     }
 
     public void UpdateSoulCapacity()

@@ -36,14 +36,16 @@ public class SoulOrb : CheckPointObject
         gameManager = GameManager.instance;
     }
 
-    protected override void SaveState()
+    public override void SaveState()
     {
-        throw new System.NotImplementedException();
+        SavePosition(transform.position);
     }
 
-    protected override void LoadState()
+    public override void LoadState()
     {
-        throw new System.NotImplementedException();
+        // TODO: When these are absorbed by the demon then they are marked
+        // active false which means this method won't be called?
+        transform.position = RestorePosition();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
