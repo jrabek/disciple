@@ -51,20 +51,40 @@ public abstract class CheckPointObject : MonoBehaviour
 
     protected Vector3 RestoreVector3(string key)
     {
-        float x = PlayerPrefs.GetFloat(key + ".x");
-        float y = PlayerPrefs.GetFloat(key + ".y");
-        float z = PlayerPrefs.GetFloat(key + ".z");
+        float x = RestoreFloat(key + ".x");
+        float y = RestoreFloat(key + ".y");
+        float z = RestoreFloat(key + ".z");
 
         return new Vector3(x, y, z);
     }
 
+    protected void SaveVector3Int(string key, Vector3Int vector)
+    {
+        SaveInt(key + ".x", vector.x);
+        SaveInt(key + ".y", vector.y);
+        SaveInt(key + ".z", vector.z);
+    }
+
+    protected Vector3Int RestoreVector3Int(string key)
+    {
+        int x = RestoreInt(key + ".x");
+        int y = RestoreInt(key + ".y");
+        int z = RestoreInt(key + ".z");
+
+        return new Vector3Int(x, y, z);
+    }
+
+
     protected void SavePosition(Vector3 vector)
     {
+        print("Saving position for " + this.tag + " " + vector);
         SaveVector3("position", vector);
     }
 
     protected Vector3 RestorePosition()
     {
-        return RestoreVector3("position");
+        Vector3 vector = RestoreVector3("position");
+        print("Restoring position for " + this.tag + " " + vector);
+        return vector;
     }
 }

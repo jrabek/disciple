@@ -10,12 +10,21 @@ public class CheckPoint : MonoBehaviour
         // This would be:
         //   enough steps to make it to the demon
         //   enough souls
+        // Seems each checkpoint would define it but we can have reasonable defaults        
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            print("Checkpoint hit");
+            print("Checkpoint entered");
+            
+            CheckPointManager.instance.SaveState(this);
+        }
+    }
 
-            CheckPointManager.instance.SaveState();
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            print("Checkpoint exited");
         }
     }
 }

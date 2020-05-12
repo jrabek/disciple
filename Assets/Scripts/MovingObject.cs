@@ -48,6 +48,18 @@ public abstract class MovingObject : CheckPointObject
         transform.position = TileToTransform(currentTilePos);
     }
 
+    public override void SaveState()
+    {        
+        SavePosition(transform.position);
+        SaveVector3Int("currentTilePos", currentTilePos);
+    }
+
+    public override void LoadState()
+    {
+        transform.position = RestorePosition();
+        currentTilePos = RestoreVector3Int("currentTilePos");
+    }
+
     protected Vector3Int CurrentTransformToTile()
     {
         return TransformToTile(transform.position);
@@ -71,17 +83,36 @@ public abstract class MovingObject : CheckPointObject
         //Store start position to move from, based on objects current transform position.
         Vector2 start = transform.position;
 
+        Vector2 castStart = start;
+
+        const float epsilon = 0.001f;
+
+        // Cast the ray from outside the box collider to avoid hitting our own collider
+        if (xDir < 0)
+        {
+            castStart = new Vector2(start.x + boxCollider.offset.x - boxCollider.size.x / 2 - epsilon, start.y);
+        }
+        else if (xDir > 0)
+        {
+            castStart = new Vector2(start.x + boxCollider.offset.x + boxCollider.size.x / 2 + epsilon, start.y);
+        }
+        else if (yDir < 0)
+        {
+            castStart = new Vector2(start.x, start.y + boxCollider.offset.y - boxCollider.size.y / 2 - epsilon);
+        }
+        else if (yDir > 0)
+        {
+            castStart = new Vector2(start.x, start.y + boxCollider.offset.y + boxCollider.size.y / 2 + epsilon);
+        }
+
         // Calculate end position based on the direction parameters passed in when calling Move.
         Vector2 end = start + new Vector2(xDir * moveScale.x, yDir * moveScale.y);
 
-        //Disable the boxCollider so that linecast doesn't hit this object's own collider.
-        boxCollider.enabled = false;
-
         //Cast a line from start point to end point checking collision on blockingLayer.
-        hit = Physics2D.Linecast(start, end, blockingLayer);
-
-        //Re-enable boxCollider after linecast
-        boxCollider.enabled = true;
+        hit = Physics2D.Linecast(castStart, end, blockingLayer);
+     
+        //Color[] lineColors = {Color.red, Color.green, Color.blue, Color.white, Color.yellow };
+        //Debug.DrawLine(castStart, end, lineColors[Random.Range(0, lineColors.Length-1)], 4.5f);
 
         if (hit.transform != null)
         {

@@ -75,7 +75,7 @@ public class Player : MovingObject
 
     public override void SaveState()
     {
-        SavePosition(transform.position);
+        base.SaveState();        
         SaveInt("souls", souls);
         SaveInt("time", time);
         SaveInt("soulCapacityMultiplier", soulCapacityMultiplier);
@@ -87,7 +87,8 @@ public class Player : MovingObject
 
     public override void LoadState()
     {
-        transform.position = RestorePosition();
+        base.LoadState();
+        isDead = false;
         souls = RestoreInt("souls");
         time = RestoreInt("time");
         soulCapacityMultiplier = RestoreInt("soulCapacityMultiplier");

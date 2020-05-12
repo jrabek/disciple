@@ -14,16 +14,6 @@ public abstract class Enemy : MovingObject
         player = GameObject.FindObjectOfType<Player>();
     }
 
-    public override void SaveState()
-    {
-        SavePosition(transform.position);
-    }
-
-    public override void LoadState()
-    {
-        transform.position = RestorePosition();
-    }
-
     protected override void MoveComplete()
     {
     }

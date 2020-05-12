@@ -14,6 +14,8 @@ public class CheckPointManager : MonoBehaviour
     [SerializeField]
     private CheckPointObject[] checkPointPrefabs;
 
+    private HashSet<CheckPoint> checkpoints = new HashSet<CheckPoint>();
+
     private void Awake()
     {
         if (!CheckPointManager.instance)
@@ -47,8 +49,14 @@ public class CheckPointManager : MonoBehaviour
         this.InvokeOnCheckpointObjects(methodInfo, null);
     }
 
-    public void SaveState()
-    {
+    public void SaveState(CheckPoint checkpoint)
+    {        
+        checkpoints.Add(checkpoint);
+        foreach (CheckPoint cp in checkpoints)
+        {
+            cp.gameObject.SetActive(cp != checkpoint);
+        }
+
         print("CheckPointManager SaveState");
         hasCheckpoint = true;
         this.InvokedMethodNamed("SaveState");
