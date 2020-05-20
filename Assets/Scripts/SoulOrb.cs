@@ -23,6 +23,7 @@ public class SoulOrb : CheckPointObject
 
     private bool isBeingCollected = false;
     private bool isBeingOffered = false;
+    private bool wasCollected = false;
 
     private GameManager gameManager;
 
@@ -39,17 +40,27 @@ public class SoulOrb : CheckPointObject
     public override void SaveState()
     {
         SavePosition(transform.position);
+        SaveBool("wasCollected", wasCollected);
     }
 
     public override void LoadState()
     {
-        // TODO: When these are absorbed by the demon then they are marked
-        // active false which means this method won't be called?
         transform.position = RestorePosition();
+        wasCollected = RestoreBool("wasCollected");
+        // TODO: Generic way to do this for collectibles
+        if (wasCollected)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {       
+    {
+        if (gameManager.paused)
+        {
+            return;
+        }
+
         if (isBeingOffered)
         {
             if (collision.CompareTag("Demon"))
@@ -79,7 +90,9 @@ public class SoulOrb : CheckPointObject
             {
                 // print("Collected");
                 player.AddSoul();
-                this.gameObject.SetActive(false);
+                // Destroy(this.gameObject);
+                wasCollected = true;
+                gameObject.SetActive(false);
             }
         }
     }

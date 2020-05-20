@@ -60,6 +60,11 @@ public class Demon : CheckPointObject
 
     private void CheckSoulOffering()
     {
+        if (gameManager.paused)
+        {
+            return;
+        }
+
         if (isOffering)
         {
             float timeBetweenExtraction = baseTimeBetweenExtraction * 10 / player.souls;
@@ -80,7 +85,12 @@ public class Demon : CheckPointObject
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {       
+    {
+        if (gameManager.paused)
+        {
+            return;
+        }
+
         if (!isOffering && collision.CompareTag("Player") && player.souls > 0)
         {
             proximityCollider.enabled = false;

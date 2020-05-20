@@ -108,6 +108,8 @@ public class GameManager : CheckPointObject
 
     public override void LoadState()
     {
+        paused = false;
+        waitingToRestart = false;
         gameOverText.gameObject.SetActive(false);
         plotPoint = (DialogKey)RestoreInt("plotPoint");
         nextRewardLevel = RestoreInt("nextRewardLevel");
@@ -177,6 +179,7 @@ public class GameManager : CheckPointObject
 
     public void GameOver(string reason)
     {
+        paused = true;
         gameOverText.gameObject.SetActive(true);        
         print("Game over " + reason);
         gameOverText.text = "You Failed To Stay Alive\n\n" + reason + "\n\nHit Space To Try Again";

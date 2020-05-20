@@ -23,6 +23,19 @@ public class Crate : MovingObject
         Assert.IsNotNull(candleLight);
     }
 
+    public override void SaveState()
+    {
+        base.SaveState();
+        SaveInt("litPushesLeft", litPushesLeft);        
+    }
+
+    public override void LoadState()
+    {
+        base.LoadState();
+        litPushesLeft = RestoreInt("litPushesLeft");
+        candleLight.enabled = litPushesLeft > 0;
+    }
+
     protected override void MoveComplete()
     {
         if (litPushesLeft <= 0)

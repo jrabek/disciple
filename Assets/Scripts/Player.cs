@@ -231,6 +231,7 @@ public class Player : MovingObject
     public void RestoreTime()
     {
         time = baseTime * timeMultiplier;
+        gameManager.UpdateTime(time);
     }
 
     //It takes a parameter loss which specifies how many points to lose.
