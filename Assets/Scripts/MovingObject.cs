@@ -7,7 +7,21 @@ using UnityEngine.Assertions;
 //The abstract keyword enables you to create classes and class members that are incomplete and must be implemented in a derived class.
 public abstract class MovingObject : CheckPointObject
 {
-    public float moveTime = 0.1f;            //Time it will take object to move, in seconds.
+    private float moveTime = 0.1f;
+
+    public float MoveTime
+    {
+        get
+        {
+            return moveTime;
+        }
+        protected set
+        {
+            moveTime = value;
+            inverseMoveTime = 1f / moveTime;
+        }
+    }
+
     public LayerMask blockingLayer;            //Layer on which collision will be checked.
 
     //[SerializeField]
@@ -20,6 +34,7 @@ public abstract class MovingObject : CheckPointObject
     private Vector2 moveScale;
     private Tilemap floor;
     private Tilemap obstacles;
+    private Tilemap walls;
     private Vector3Int currentTilePos;
     private Vector3Int targetTilePos;
 
@@ -39,9 +54,15 @@ public abstract class MovingObject : CheckPointObject
  
         floor = GameManager.instance.grid.transform.Find("Floor").GetComponent<Tilemap>();
         obstacles = GameManager.instance.grid.transform.Find("Obstacles").GetComponent<Tilemap>();
+        walls = GameManager.instance.grid.transform.Find("Walls").GetComponent<Tilemap>();
 
         Assert.IsNotNull(floor);
         Assert.IsNotNull(obstacles);
+
+        if (BlockedByLight())
+        {
+            blockingLayer |= LayerMask.GetMask("Light");
+        }
 
         currentTilePos = CurrentTransformToTile();
         // Force alignment
@@ -78,14 +99,20 @@ public abstract class MovingObject : CheckPointObject
     //Move returns true if it is able to move and false if not. 
     //Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
     public bool Move(int xDir, int yDir, out RaycastHit2D hit)
-    {        
+    {
+        if (xDir == 0 && yDir == 0)
+        {
+            MoveComplete();
+            hit = new RaycastHit2D();
+            return true;
+        }
 
         //Store start position to move from, based on objects current transform position.
         Vector2 start = transform.position;
 
         Vector2 castStart = start;
 
-        const float epsilon = 0.001f;
+        const float epsilon = 0.005f;
 
         // Cast the ray from outside the box collider to avoid hitting our own collider
         if (xDir < 0)
@@ -108,28 +135,28 @@ public abstract class MovingObject : CheckPointObject
         // Calculate end position based on the direction parameters passed in when calling Move.
         Vector2 end = start + new Vector2(xDir * moveScale.x, yDir * moveScale.y);
 
+        Color[] lineColors = { Color.red, Color.green, Color.blue, Color.white, Color.yellow };
+        Debug.DrawLine(castStart, end, lineColors[Random.Range(0, lineColors.Length - 1)], 45f);
+
         //Cast a line from start point to end point checking collision on blockingLayer.
         hit = Physics2D.Linecast(castStart, end, blockingLayer);
-     
-        //Color[] lineColors = {Color.red, Color.green, Color.blue, Color.white, Color.yellow };
-        //Debug.DrawLine(castStart, end, lineColors[Random.Range(0, lineColors.Length-1)], 4.5f);
 
         if (hit.transform != null)
         {
-            // print(this.tag + " would collide with " + hit.transform);
+            print(this.gameObject + " would collide with " + hit.transform);
 
-            if(!TryOverlapTransform(hit.transform))
+            if (!TryOverlapTransform(hit.transform))
             {
                 return false;
             }
         }
-        
+                        
         targetTilePos = new Vector3Int(currentTilePos.x + xDir, currentTilePos.y + yDir, 0);
 
-        // print("Checking tile at " + targetTilePos);
+        print(this.tag + " checking tile at " + targetTilePos);
 
         //Check if anything was hit
-        if (floor.HasTile(targetTilePos) && !obstacles.HasTile(targetTilePos))
+        if ((floor.HasTile(targetTilePos) || !RequiresFloorTileToMove()) && !obstacles.HasTile(targetTilePos) && !walls.HasTile(targetTilePos))
         {
             //If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
             StartCoroutine(SmoothMovement(end));
@@ -138,7 +165,7 @@ public abstract class MovingObject : CheckPointObject
             return true;
         } else
         {
-            // print("No tile at " + targetTilePos);
+            print(this.tag + ": Obstacle, wall, or no floor tile at " + targetTilePos);
         }
 
         //If something was hit, return false, Move was unsuccesful.
@@ -147,7 +174,11 @@ public abstract class MovingObject : CheckPointObject
 
     private bool TryOverlapTransform(Transform transform)
     {
-        if (transform.gameObject.CompareTag("Enemy") && this.GetComponent<Player>())
+        if (transform.gameObject.CompareTag("Crate") && AllowedToMoveCrate())
+        {
+            return MoveCrate(transform.GetComponent<Crate>());
+        }
+        else if (transform.gameObject.CompareTag("Enemy") && this.GetComponent<Player>())
         {
             return true;
         }
@@ -155,14 +186,19 @@ public abstract class MovingObject : CheckPointObject
         {
             return true;
         }
-        else if (transform.gameObject.CompareTag("Crate") && AllowedToMoveCrate())
+        else if (transform.CompareTag("Light") && !BlockedByLight())
         {
-            return MoveCrate(transform.GetComponent<Crate>());            
+            return true;
         }
         else
         {
             return false;
         }
+    }
+
+    protected virtual bool RequiresFloorTileToMove()
+    {
+        return true;
     }
 
     protected virtual bool KillsPlayer()
@@ -173,6 +209,11 @@ public abstract class MovingObject : CheckPointObject
     protected virtual bool AllowedToMoveCrate()
     {
         return true;
+    }
+
+    public virtual bool BlockedByLight()
+    {
+        return false;
     }
 
     private bool MoveCrate(Crate crate)
@@ -202,7 +243,7 @@ public abstract class MovingObject : CheckPointObject
     //Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
     protected IEnumerator SmoothMovement(Vector3 end)
     {
-        // print("Moving smoothly to " + end);
+        // print(this.tag + " moving smoothly to " + TransformToTile(end));
 
         //Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
         //Square magnitude is used instead of magnitude becae it's computationally cheaper.
@@ -229,7 +270,7 @@ public abstract class MovingObject : CheckPointObject
         transform.position = TileToTransform(targetTilePos);
         currentTilePos = targetTilePos;
 
-        // print("Finishing moving to " + transform.position);
+        // print(this.tag + " finishing moving to " + TransformToTile(transform.position));
 
         MoveComplete();
     }
@@ -239,7 +280,7 @@ public abstract class MovingObject : CheckPointObject
     ////AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
     protected virtual bool AttemptMove(int xDir, int yDir, out GameObject hitObject)
     {
-        // print("AttemptMove xDir " + xDir + " yDir " + yDir);
+        // print(this + " attemptMove xDir " + xDir + " yDir " + yDir);
 
         //Hit will store whatever our linecast hits when Move is called.
         RaycastHit2D hit;

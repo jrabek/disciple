@@ -8,6 +8,8 @@ TagManager:
   - Crate
   - Enemy
   - Soul Orb
+  - Game Manager
+  - Light
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - 
   - 
   - Actors
-  - 
+  - Light
   - 
   - 
   - 

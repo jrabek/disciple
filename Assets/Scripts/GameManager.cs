@@ -171,11 +171,26 @@ public class GameManager : CheckPointObject
     {        
         foreach (Enemy enemy in enemies)
         {
-            enemy.RunAI();
-        }
+            if (enemy.gameObject.active)
+            {
+                enemy.StartAI();
+            }            
+        }        
+    }
 
+    public void EnemyFinishAction()
+    {
+        foreach (Enemy enemy in enemies)
+        {
+            if (!enemy.AIComplete())
+            {
+                // print($"{enemy} not done moving");
+                return;
+            }
+        }
         playersTurn = true;
     }
+    
 
     public void GameOver(string reason)
     {
